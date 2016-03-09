@@ -1,4 +1,4 @@
-package MintDebugger;
+package mintDebugger;
 
 import openfl.display.Stage;
 
