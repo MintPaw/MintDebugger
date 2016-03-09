@@ -1,0 +1,13 @@
+{
+  "name": "MintDebugger",
+  "url" : "https://github.com/MintPaw/MintDebugger",
+  "license": "Unknown",
+  "tags": ["unknown", "unknown2"],
+  "description": "unknown",
+  "version": "0.0.1",
+  "releasenote": "unknown",
+  "contributors": ["unkown","unkown","unkown"],
+  "dependencies": {
+    "openfl": "3.6.0"
+  }
+}
