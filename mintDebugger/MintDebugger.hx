@@ -79,7 +79,6 @@ class MintDebugger
 		{
 				for (f in Reflect.fields(topEntry.value))
 				{
-					trace(f);
 					var e:FieldEntry = {
 						type: Type.typeof(Reflect.field(topEntry, f)),
 						name: f,
@@ -95,31 +94,7 @@ class MintDebugger
 				}
 		}
 
-		
-		// _currentScopeFields.push(entry);
 		return topEntry;
-
-		// var s:String = "";
-		// for (i in 0...depth) s += " ";
-
-		// if (Reflect.isObject(d)) { 
-		// 	trace('$s$n:');
-
-		// 	if (depth >= maxDepth) return;
-		// 		for (field in Reflect.fields(d)) {
-		// 			itFields(Reflect.field(d, field), field, depth+1, maxDepth);
-		// 		}
-		// }
-
-		// if (!Reflect.isFunction(d)) trace('$s$n = $d');
-
-
-		// var a:Accordion = new Accordion();
-		// a.width = 400;
-		// a.height = 400;
-		// a.text = d.toString();
-		// _accords.push(a);
-		// _uiRoot.addChild(a);
 	}
 }
 
