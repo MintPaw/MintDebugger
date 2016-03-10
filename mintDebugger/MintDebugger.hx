@@ -5,6 +5,7 @@ import openfl.events.KeyboardEvent;
 import openfl.ui.Keyboard;
 import haxe.ui.toolkit.core.*;
 import haxe.ui.toolkit.containers.*;
+import haxe.ui.toolkit.controls.*;
 
 class MintDebugger
 {
@@ -37,9 +38,12 @@ class MintDebugger
 		Toolkit.init();
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
 
-		var vbox:VBox = new VBox();
 		var accord:Accordion = new Accordion();
+		// _uiRoot.alpha = 0;
+		_uiRoot.addChild(accord);
 
-		vbox.addChild(accord);
+		var b:Button = new Button();
+		b.text = "Test";
+		_uiRoot.addChild(b);
 	}
 }
