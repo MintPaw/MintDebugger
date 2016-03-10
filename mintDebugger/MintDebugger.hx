@@ -1,6 +1,6 @@
 package mintDebugger;
 
-import openfl.display.Stage;
+import openfl.display.*;
 import openfl.events.KeyboardEvent;
 import openfl.ui.Keyboard;
 import haxe.ui.toolkit.core.*;
@@ -14,6 +14,8 @@ class MintDebugger
 
 	private var _stage:Stage;
 	private var _uiRoot:Root;
+	private var _accords:Array<Accordion>;
+	private var _topEntry:FieldEntry;
 
 	public function new(stage:Stage):Void {
 		_stage = stage;
@@ -38,12 +40,93 @@ class MintDebugger
 		Toolkit.init();
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
 
-		var accord:Accordion = new Accordion();
-		// _uiRoot.alpha = 0;
-		_uiRoot.addChild(accord);
+		_accords = [];
+		_uiRoot.style.backgroundAlpha = 0;
+		// _uiRoot.addChild(accord);
 
-		var b:Button = new Button();
-		b.text = "Test";
-		_uiRoot.addChild(b);
+		// var a:Accordion = new Accordion();
+		// var b:Accordion = new Accordion();
+		// var c:Button = new Button();
+		// a.width = b.width = c.width = 400;
+		// a.height = b.height = c.height = _stage.stageHeight;
+		// a.text = b.text = c.text = "test";
+		// _uiRoot.addChild(a);
+		// a.addChild(b);
+		// b.addChild(c);
+		
+		_topEntry = itFields(_stage, "stage", 0);
+		trace("e's: " + _topEntry.children.length);
 	}
+
+	private function itFields(
+			field:Dynamic,
+			name:String,
+			maxDepth:Int,
+			currentDepth:Int=0):FieldEntry {
+
+		var topEntry:FieldEntry = {
+			type: Type.typeof(field),
+			name: name,
+			value: field,
+			children: []
+		};
+
+		var noItTypes:Array<Type.ValueType> = [
+			Type.ValueType.TInt, Type.ValueType.TFloat, Type.ValueType.TFunction,
+			Type.ValueType.TNull];
+
+		if (noItTypes.indexOf(topEntry.type) == -1)
+		{
+				for (f in Reflect.fields(topEntry.value))
+				{
+					trace(f);
+					var e:FieldEntry = {
+						type: Type.typeof(Reflect.field(topEntry, f)),
+						name: f,
+						value: Reflect.field(topEntry, f),
+						children: [],
+						parent: topEntry
+					};
+
+					topEntry.children.push(e);
+
+					if (currentDepth < maxDepth)
+						itFields(e.value, e.name, maxDepth, currentDepth+1);
+				}
+		}
+
+		
+		// _currentScopeFields.push(entry);
+		return topEntry;
+
+		// var s:String = "";
+		// for (i in 0...depth) s += " ";
+
+		// if (Reflect.isObject(d)) { 
+		// 	trace('$s$n:');
+
+		// 	if (depth >= maxDepth) return;
+		// 		for (field in Reflect.fields(d)) {
+		// 			itFields(Reflect.field(d, field), field, depth+1, maxDepth);
+		// 		}
+		// }
+
+		// if (!Reflect.isFunction(d)) trace('$s$n = $d');
+
+
+		// var a:Accordion = new Accordion();
+		// a.width = 400;
+		// a.height = 400;
+		// a.text = d.toString();
+		// _accords.push(a);
+		// _uiRoot.addChild(a);
+	}
+}
+
+typedef FieldEntry = {
+	type:Type.ValueType,
+	name:String,
+	?parent:FieldEntry,
+	children:Array<FieldEntry>,
+	value:Dynamic
 }
