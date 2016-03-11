@@ -44,18 +44,24 @@ class MintDebugger
 		_uiRoot.style.backgroundAlpha = 0;
 		// _uiRoot.addChild(accord);
 
-		// var a:Accordion = new Accordion();
-		// var b:Accordion = new Accordion();
-		// var c:Button = new Button();
-		// a.width = b.width = c.width = 400;
-		// a.height = b.height = c.height = _stage.stageHeight;
-		// a.text = b.text = c.text = "test";
-		// _uiRoot.addChild(a);
-		// a.addChild(b);
-		// b.addChild(c);
-		
+		// var s:Dynamic = _stage;
+		// trace(_stage.stageWidth, Reflect.getProperty(s, "stageWidth"));
 		_topEntry = itFields(_stage, "stage", 0);
-		trace("e's: " + _topEntry.children.length);
+
+		for (c in _topEntry.children) {
+			var s:String = "";
+			s += c.name;
+			s += " (" + c.className + ")";
+			s += " = " + c.value;
+			trace(s);
+		}
+
+		// var a:Accordion = new Accordion();
+		// a.width = 400;
+		// a.height = 400;
+		// a.text = d.toString();
+		// _accords.push(a);
+		// _uiRoot.addChild(a);
 	}
 
 	private function itFields(
@@ -64,42 +70,54 @@ class MintDebugger
 			maxDepth:Int,
 			currentDepth:Int=0):FieldEntry {
 
-		var topEntry:FieldEntry = {
-			type: Type.typeof(field),
-			name: name,
-			value: field,
-			children: []
-		};
+		var topEntry:FieldEntry = toFieldEntry(name, field);
 
-		var noItTypes:Array<Type.ValueType> = [
-			Type.ValueType.TInt, Type.ValueType.TFloat, Type.ValueType.TFunction,
-			Type.ValueType.TNull];
+		for (fname in Type.getInstanceFields(Type.getClass(topEntry.value))) {
+			var f:Dynamic = Reflect.field(topEntry.value, fname);
+			if (Type.typeof(f) == Type.ValueType.TFunction) continue;
+			// if (Reflect.isFunction(f)) continue;
 
-		if (noItTypes.indexOf(topEntry.type) == -1)
-		{
-				for (f in Reflect.fields(topEntry.value))
-				{
-					var e:FieldEntry = {
-						type: Type.typeof(Reflect.field(topEntry, f)),
-						name: f,
-						value: Reflect.field(topEntry, f),
-						children: [],
-						parent: topEntry
-					};
+			var e:FieldEntry = toFieldEntry(fname, f, topEntry);
+			topEntry.children.push(e);
 
-					topEntry.children.push(e);
-
-					if (currentDepth < maxDepth)
-						itFields(e.value, e.name, maxDepth, currentDepth+1);
-				}
+		var noItClasses:Array<String> = ["Int", "Bool", "Float"];
+			if (noItClasses.indexOf(topEntry.className) == -1) {
+				if (currentDepth < maxDepth)
+					itFields(e.value, e.name, maxDepth, currentDepth+1);
+			}
 		}
 
 		return topEntry;
 	}
+
+	private function toFieldEntry(
+			name:String,
+			value:Dynamic,
+			parent=null):FieldEntry
+	{
+		//TODO: Fix Neko
+		var className:String = "?";
+
+		var t = Type.typeof(value);
+		if (t == Type.ValueType.TInt) className = "Int";
+		else if (t == Type.ValueType.TFloat) className = "Float";
+		else if (t == Type.ValueType.TBool) className = "Bool";
+		else className = Type.getClassName(Type.getClass(value));
+
+		var ent:FieldEntry = {
+			className: className,
+			name: name,
+			parent: parent,
+			children: [],
+			value: value
+		};
+
+		return ent;
+	}
 }
 
 typedef FieldEntry = {
-	type:Type.ValueType,
+	className:String,
 	name:String,
 	?parent:FieldEntry,
 	children:Array<FieldEntry>,
