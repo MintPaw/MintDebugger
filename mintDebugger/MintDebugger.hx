@@ -14,7 +14,7 @@ class MintDebugger
 
 	private var _stage:Stage;
 	private var _uiRoot:Root;
-	private var _accords:Array<Accordion>;
+	private var _list:ListView;
 	private var _topEntry:FieldEntry;
 
 	public function new(stage:Stage):Void {
@@ -40,28 +40,22 @@ class MintDebugger
 		Toolkit.init();
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
 
-		_accords = [];
-		_uiRoot.style.backgroundAlpha = 0;
+		_list = new ListView();
+		_list.width = 300;
+		_list.height = _stage.stageHeight * 0.9;
+		_list.x = 20;
+		_list.y = _stage.stageHeight/2 - _list.height/2;
+		_uiRoot.addChild(_list);
+		// _uiRoot.style.backgroundAlpha = 0;
 		// _uiRoot.addChild(accord);
 
 		// var s:Dynamic = _stage;
 		// trace(_stage.stageWidth, Reflect.getProperty(s, "stageWidth"));
 		_topEntry = itFields(_stage, "stage", 0);
 
-		for (c in _topEntry.children) {
-			var s:String = "";
-			s += c.name;
-			s += " (" + c.className + ")";
-			s += " = " + c.value;
-			trace(s);
-		}
+		trace('Found ${_topEntry.children.length}');
+		for (c in _topEntry.children) trace(c.displayString);
 
-		// var a:Accordion = new Accordion();
-		// a.width = 400;
-		// a.height = 400;
-		// a.text = d.toString();
-		// _accords.push(a);
-		// _uiRoot.addChild(a);
 	}
 
 	private function itFields(
@@ -95,7 +89,7 @@ class MintDebugger
 			value:Dynamic,
 			parent=null):FieldEntry
 	{
-		//TODO: Fix Neko
+		//TODO: Fix Neko being retarted
 		var className:String = "?";
 
 		var t = Type.typeof(value);
@@ -103,6 +97,7 @@ class MintDebugger
 		else if (t == Type.ValueType.TFloat) className = "Float";
 		else if (t == Type.ValueType.TBool) className = "Bool";
 		else className = Type.getClassName(Type.getClass(value));
+
 
 		var ent:FieldEntry = {
 			className: className,
@@ -112,6 +107,20 @@ class MintDebugger
 			value: value
 		};
 
+		var s:String = '${ent.name}:${ent.className}';
+		if (ent.className == "Int" ||
+				ent.className == "Float" ||
+				ent.className == "Bool") {
+			s += ' = ${ent.value}';
+		} else if (ent.className == "Array") {
+			s += " = []";
+		} else {
+			s += ' = {}';
+		}
+
+
+		ent.displayString = s;
+
 		return ent;
 	}
 }
@@ -119,6 +128,7 @@ class MintDebugger
 typedef FieldEntry = {
 	className:String,
 	name:String,
+	?displayString:String,
 	?parent:FieldEntry,
 	children:Array<FieldEntry>,
 	value:Dynamic
