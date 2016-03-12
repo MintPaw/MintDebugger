@@ -30,6 +30,7 @@ class MintDebugger
 				createDebugger();
 				trace("MintDebugger created.");
 			} else {
+				toggleDebugger();
 				trace("MintDebugger invoked.");
 			}
 		}
@@ -40,21 +41,21 @@ class MintDebugger
 		Toolkit.init();
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
 
+		_uiRoot.style.backgroundAlpha = 0;
+
 		_list = new ListView();
 		_list.width = 300;
 		_list.height = _stage.stageHeight * 0.9;
 		_list.x = 20;
 		_list.y = _stage.stageHeight/2 - _list.height/2;
 		_uiRoot.addChild(_list);
-		// _uiRoot.style.backgroundAlpha = 0;
-		// _uiRoot.addChild(accord);
 
-		// var s:Dynamic = _stage;
-		// trace(_stage.stageWidth, Reflect.getProperty(s, "stageWidth"));
 		_topEntry = itFields(_stage, "stage", 0);
 
 		trace('Found ${_topEntry.children.length}');
-		for (c in _topEntry.children) trace(c.displayString);
+		for (c in _topEntry.children) {
+			_list.dataSource.add({ text: c.displayString });
+		}
 
 	}
 
