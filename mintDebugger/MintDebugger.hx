@@ -3,6 +3,7 @@ package mintDebugger;
 import openfl.display.*;
 import openfl.events.*;
 import openfl.ui.*;
+import haxe.ui.toolkit.events.*;
 import haxe.ui.toolkit.core.*;
 import haxe.ui.toolkit.data.*;
 import haxe.ui.toolkit.containers.*;
@@ -56,6 +57,7 @@ class MintDebugger
 		_topEntry = itFields(_stage, "stage");
 
 		_list = new ListView();
+		_list.onClick = clickedField;
 		_list.width = _stage.stageWidth * 0.5;
 		_list.height = _stage.stageHeight * 0.9;
 		_list.x = _stage.stageWidth * 0.05;
@@ -124,6 +126,7 @@ class MintDebugger
 			dsEntry: {text: ""},
 			value: value
 		};
+		ent.dsEntry.entry = ent;
 
 		return ent;
 	}
@@ -167,6 +170,11 @@ class MintDebugger
 		}
 
 		ent.dsEntry.text = s;
+	}
+
+	private function clickedField(e:UIEvent):Void {
+		var fieldName:String = _list.getItem(_list.selectedIndex).data.entry.name;
+		trace(fieldName);
 	}
 }
 
