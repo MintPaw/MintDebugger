@@ -54,8 +54,6 @@ class MintDebugger
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
 		_uiRoot.style.backgroundAlpha = 0;
 
-		_topEntry = itFields(_stage, "stage");
-
 		_list = new ListView();
 		_list.onClick = clickedField;
 		_list.width = _stage.stageWidth * 0.5;
@@ -64,12 +62,17 @@ class MintDebugger
 		_list.y = _stage.stageHeight/2 - _list.height/2;
 		_uiRoot.addChild(_list);
 
-		trace('Found ${_topEntry.children.length}');
-		for (c in _topEntry.children) {
-			_list.dataSource.add(c.dsEntry);
-		}
+		setScope(_stage, "stage");
 
 		toggleDebugger();
+	}
+
+	private function setScope(field:Dynamic, name:String):Void {
+		_topEntry = itFields(field, name);
+		_list.dataSource.removeAll();
+		for (c in _topEntry.children) _list.dataSource.add(c.dsEntry);
+
+		trace('Found ${_topEntry.children.length}');
 	}
 
 	private function itFields(field:Dynamic, name:String):FieldEntry {
@@ -174,7 +177,7 @@ class MintDebugger
 
 	private function clickedField(e:UIEvent):Void {
 		var fieldName:String = _list.getItem(_list.selectedIndex).data.entry.name;
-		trace(fieldName);
+		setScope(Reflect.field(_topEntry, fieldName), fieldName);
 	}
 }
 
