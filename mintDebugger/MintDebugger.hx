@@ -33,7 +33,6 @@ class MintDebugger
 	}
 
 	private function keyUp(e:KeyboardEvent):Void {
-
 		if (e.keyCode == debugKey) {
 			if (!created) {
 				createDebugger();
@@ -53,12 +52,12 @@ class MintDebugger
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
 		_uiRoot.style.backgroundAlpha = 0;
 
-		_topEntry = itFields(_stage, "stage", 0);
+		_topEntry = itFields(_stage, "stage");
 
 		_list = new ListView();
-		_list.width = 300;
+		_list.width = _stage.stageWidth * 0.5;
 		_list.height = _stage.stageHeight * 0.9;
-		_list.x = 20;
+		_list.x = _stage.stageWidth * 0.05;
 		_list.y = _stage.stageHeight/2 - _list.height/2;
 		_uiRoot.addChild(_list);
 
@@ -70,11 +69,7 @@ class MintDebugger
 		toggleDebugger();
 	}
 
-	private function itFields(
-			field:Dynamic,
-			name:String,
-			maxDepth:Int,
-			currentDepth:Int=0):FieldEntry {
+	private function itFields(field:Dynamic, name:String):FieldEntry {
 
 		var topEntry:FieldEntry = toFieldEntry(name, field);
 
@@ -85,12 +80,6 @@ class MintDebugger
 
 			var e:FieldEntry = toFieldEntry(fname, f, topEntry);
 			topEntry.children.push(e);
-
-		var noItClasses:Array<String> = ["Int", "Bool", "Float"];
-			if (noItClasses.indexOf(topEntry.className) == -1) {
-				if (currentDepth < maxDepth)
-					itFields(e.value, e.name, maxDepth, currentDepth+1);
-			}
 		}
 
 		return topEntry;
@@ -138,15 +127,10 @@ class MintDebugger
 		_refreshLeft -= _elapsed;
 		if (_refreshLeft <= 0) {
 			_refreshLeft = refreshTime;
-			updateFields();
+
+			for (ent in _topEntry.children) updateEntry(ent);
+			cast(_list.dataSource, DataSource).dispatchEvent(new Event(Event.CHANGE));
 		}
-	}
-
-	public function updateFields() {
-		for (ent in _topEntry.children) updateEntry(ent);
-
-		cast(_list.dataSource, DataSource).dispatchEvent(
-				new Event(Event.CHANGE, true, true));
 	}
 
 	public function updateEntry(ent:FieldEntry):Void {
@@ -159,6 +143,8 @@ class MintDebugger
 			s += ' = ${ent.value}';
 		} else if (ent.className == "Array") {
 			s += " = []";
+		} else if (ent.value == null) {
+			s += " = null";
 		} else {
 			s += ' = {}';
 		}
