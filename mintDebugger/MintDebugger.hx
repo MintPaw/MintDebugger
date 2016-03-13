@@ -39,12 +39,7 @@ class MintDebugger
 
 	private function keyUp(e:KeyboardEvent):Void {
 		if (e.keyCode == debugKey) {
-			if (!created) {
-				createDebugger();
-				trace("MintDebugger created.");
-			} else {
-				trace("MintDebugger invoked.");
-			}
+			if (!created) createDebugger() else toggleDebugger();
 		}
 	}
 
@@ -139,6 +134,8 @@ class MintDebugger
 
 	public function toggleDebugger():Void {
 		visible = !visible;
+		_uiRoot.visible = visible;
+
 		if (visible) {
 			Mouse.show();
 			_stage.addEventListener(Event.ENTER_FRAME, update);
