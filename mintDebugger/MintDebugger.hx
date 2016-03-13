@@ -79,9 +79,9 @@ class MintDebugger
 	}
 
 	private function itFields(field:Dynamic, name:String):FieldEntry {
-
 		var topEntry:FieldEntry = toFieldEntry(name, field);
 
+		// trace(name, topEntry);
 		for (fname in Type.getInstanceFields(Type.getClass(topEntry.value))) {
 			var f:Dynamic = Reflect.field(topEntry.value, fname);
 			if (Type.typeof(f) == Type.ValueType.TFunction) continue;
@@ -181,7 +181,10 @@ class MintDebugger
 
 	private function clickedField(e:UIEvent):Void {
 		var fieldName:String = _list.getItem(_list.selectedIndex).data.entry.name;
-		setScope(Reflect.field(_topEntry, fieldName), fieldName);
+		var f:Dynamic = Reflect.field(_topEntry.value, fieldName);
+
+		trace('Moving into $fieldName, this is $f');
+		setScope(f, fieldName);
 	}
 }
 
