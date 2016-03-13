@@ -140,6 +140,7 @@ class MintDebugger
 	public function toggleDebugger():Void {
 		visible = !visible;
 		if (visible) {
+			Mouse.show();
 			_stage.addEventListener(Event.ENTER_FRAME, update);
 		} else {
 			_stage.removeEventListener(Event.ENTER_FRAME, update);
