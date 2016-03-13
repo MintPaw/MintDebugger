@@ -28,8 +28,11 @@ class MintDebugger
 	private var _lastTime:Float = 0;
 	private var _elapsed:Float = 0;
 
-	public function new(stage:Stage):Void {
+	private var _startPoint:Dynamic;
+
+	public function new(stage:Stage, startPoint:Dynamic):Void {
 		_stage = stage;
+		_startPoint = startPoint;
 		stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 		trace("MintDebugger ready.");
 	}
@@ -62,7 +65,7 @@ class MintDebugger
 		_list.y = _stage.stageHeight/2 - _list.height/2;
 		_uiRoot.addChild(_list);
 
-		setScope(_stage, "stage");
+		setScope(_startPoint, "root");
 
 		toggleDebugger();
 	}
