@@ -13,6 +13,7 @@ class MintDebugger
 {
 	public static var debugKey:Int = Keyboard.F12;
 	public static var refreshTime:Float = 1;
+	public static var priorityNames:Array<String> = [];
 
 	private static var created:Bool = false;
 	private static var visible:Bool = false;
@@ -82,13 +83,29 @@ class MintDebugger
 			topEntry.children.push(e);
 		}
 
+		topEntry.children.sort(function (f1, f2) { 
+			return Reflect.compare(f1.name.toLowerCase(), f2.name.toLowerCase()); });
+
+		for (i in 0...priorityNames.length) {
+			var nameToFind:String = priorityNames[i];
+
+			for (j in 0...topEntry.children.length) {
+				if (topEntry.children[j].name == nameToFind) {
+					var tmp = topEntry.children[j];
+					topEntry.children[j] = topEntry.children[i];
+					topEntry.children[i] = tmp;
+					break;
+				}
+			}
+		}
+
 		return topEntry;
 	}
 
 	private function toFieldEntry(
 			name:String,
 			value:Dynamic,
-			parent=null):FieldEntry
+			parent:Dynamic=null):FieldEntry
 	{
 		//TODO: Fix Neko being retarded
 		var className:String = "?";
