@@ -60,8 +60,11 @@ class MintDebugger
 
 		Toolkit.init();
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
-		_xmlUI = Toolkit.processXml(Xml.parse(ResourceManager.instance.getText("assets/layout.xml")));
+		_xmlUI = Toolkit.processXml(
+				Xml.parse(ResourceManager.instance.getText("assets/layout.xml")));
+		_uiRoot.style.backgroundAlpha = 0;
 		_uiRoot.addChild(_xmlUI);
+
 		_list = _xmlUI.findChild("fields");
 
 		setScope(_startPoint, "root");
