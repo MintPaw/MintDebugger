@@ -94,14 +94,16 @@ class MintDebugger
 		topEntry.children.sort(function (f1, f2) { 
 			return Reflect.compare(f1.name.toLowerCase(), f2.name.toLowerCase()); });
 
+		var numMoved:Int = 0;
 		for (i in 0...priorityNames.length) {
 			var nameToFind:String = priorityNames[i];
 
 			for (j in 0...topEntry.children.length) {
 				if (topEntry.children[j].name == nameToFind) {
 					var tmp = topEntry.children[j];
-					topEntry.children[j] = topEntry.children[i];
-					topEntry.children[i] = tmp;
+					topEntry.children[j] = topEntry.children[numMoved];
+					topEntry.children[numMoved] = tmp;
+					numMoved++;
 					break;
 				}
 			}
@@ -188,7 +190,7 @@ class MintDebugger
 		if (f == null) return;
 		if (primativeTypes.indexOf(Type.typeof(f)) != -1) return;
 
-		trace('Moving into $fieldName, this is $f');
+		trace('Moving into $fieldName');
 		setScope(f, fieldName);
 	}
 }
