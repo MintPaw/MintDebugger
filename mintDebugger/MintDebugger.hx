@@ -26,9 +26,12 @@ class MintDebugger
 	];
 
 	private var _stage:Stage;
+	private var _topEntry:FieldEntry;
+
 	private var _uiRoot:Root;
 	private var _list:ListView;
-	private var _topEntry:FieldEntry;
+	private var _buttonBox:VBox;
+	private var _buttons:Array<Button>;
 
 	private var _refreshLeft:Float = 0;
 	private var _lastTime:Float = 0;
@@ -58,11 +61,21 @@ class MintDebugger
 		Toolkit.openFullscreen(function (root:Root) {_uiRoot = root;});
 		_uiRoot.style.backgroundAlpha = 0;
 
+		var p:Dynamic = {};
+		p.l = _stage.stageWidth * 0.05;
+		p.t = _stage.stageHeight * 0.05;
+
+		_buttonBox = new VBox();
+		_buttonBox.autoSize = true;
+		_buttonBox.x = p.l;
+		_buttonBox.y = p.t;
+		_uiRoot.addChild(_buttonBox);
+
 		_list = new ListView();
 		_list.onClick = clickedField;
 		_list.width = _stage.stageWidth * 0.5;
 		_list.height = _stage.stageHeight * 0.9;
-		_list.x = _stage.stageWidth * 0.05;
+		_list.x = p.l;
 		_list.y = _stage.stageHeight/2 - _list.height/2;
 		_uiRoot.addChild(_list);
 

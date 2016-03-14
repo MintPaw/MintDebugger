@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<grid id="main" style="borderSize:1;padding:5" width="100%" height="100%" columns="2" autoSize="false">
+	
+	<hbox id="pathBox" width="50%">
+		<button text="NONE" />
+	</hbox>
+
+	<hbox id="optionsBox" width="50%" autoSize="false" >
+		<!-- TODO: Align this right-to-left -->
+	</hbox>
+
+	<listview id="fields" width="50%" height="100%">
+		<array>
+			NONE
+		</array>
+	</listview>
+
+	<vbox id="consoleBox" width="50%" height="100%">
+		<text style="backgroundColor:0x333333" id="consoleOutput" text="" height="100%" width="100%" />
+		<textinput style="backgroundColor:0x333333" id="consoleInput" width="100%"/>
+	</vbox>
+
+</grid>
