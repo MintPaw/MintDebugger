@@ -55,7 +55,7 @@ class MintDebugger
 
 	private function createDebugger():Void {
 		created = true;
-		_refreshLeft = refreshTime;
+		_refreshLeft = 0;
 		_lastTime = Timer.stamp();
 
 		Toolkit.init();
@@ -67,6 +67,7 @@ class MintDebugger
 		_uiRoot.addChild(_xmlUI);
 
 		_list = _xmlUI.findChild("fields");
+		_list.onClick = clickedField;
 		setScope(_startPoint, "root");
 		toggleDebugger();
 	}
@@ -172,10 +173,10 @@ class MintDebugger
 				ent.className == "Float" ||
 				ent.className == "Bool") {
 			s += ' = ${ent.value}';
-		} else if (ent.className == "Array") {
-			s += " = []";
 		} else if (ent.value == null) {
 			s += " = null";
+		} else if (ent.className == "Array") {
+			s += ' = [${ent.value.length}]';
 		} else {
 			s += ' = {}';
 		}
