@@ -2,4 +2,8 @@
 <project>
 	<haxelib name="haxeui"/>
 	<haxedef name="no-inline" if="neko" />
+	<haxedef name="no-inline" if="neko" />
+
+	<assets path="assets" />
+
 </project>
