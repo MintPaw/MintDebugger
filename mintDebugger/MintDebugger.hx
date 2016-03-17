@@ -211,7 +211,13 @@ class MintDebugger
 
 	private function clickedField(e:UIEvent):Void {
 		var fieldName:String = _list.getItem(_list.selectedIndex).data.entry.name;
-		var f:Dynamic = Reflect.field(_topEntry.value, fieldName);
+		var f:Dynamic = null;
+
+		if (_topEntry.className == "Array") {
+			f = _topEntry.value[Std.parseInt(fieldName)];
+		} else {
+			f = Reflect.field(_topEntry.value, fieldName);
+		}
 
 		if (f == null) return;
 		if (primativeTypes.indexOf(Type.typeof(f)) != -1) return;
