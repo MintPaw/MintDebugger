@@ -87,15 +87,20 @@ class MintDebugger
 			parent:FieldEntry=null):Void
 	{
 		_topEntry = itFields(field, name);
-		if (parent != null) _topEntry.parent = parent;
+		_topEntry.parent = parent;
 		_list.dataSource.removeAll();
 		for (c in _topEntry.children) _list.dataSource.add(c.dsEntry);
-
-		// trace('Found ${_topEntry.children.length}');
 	}
 
 	private function itFields(field:Dynamic, name:String):FieldEntry {
 		var topEntry:FieldEntry = toFieldEntry(name, field);
+
+		if (Std.is(field, Array)) {
+			for (i in 0...field.length)
+				topEntry.children.push(toFieldEntry(cast i, field[i], topEntry));
+
+			return topEntry;
+		}
 
 		for (fname in Type.getInstanceFields(Type.getClass(topEntry.value))) {
 			var f:Dynamic = Reflect.field(topEntry.value, fname);
@@ -180,7 +185,13 @@ class MintDebugger
 	}
 
 	public function updateEntry(ent:FieldEntry):Void {
-		ent.value = Reflect.field(ent.parent.value, ent.name);
+		ent.value = null;
+
+		if (ent.parent.className == "Array") {
+			ent.value = ent.parent.value[Std.parseInt(ent.name)];
+		} else {
+			ent.value = Reflect.field(ent.parent.value, ent.name);
+		}
 
 		var s:String = '${ent.name}:${ent.className}';
 		if (ent.className == "Int" ||
@@ -204,7 +215,6 @@ class MintDebugger
 
 		if (f == null) return;
 		if (primativeTypes.indexOf(Type.typeof(f)) != -1) return;
-
 		trace('Moving into $fieldName');
 
 		var pathBox = _xmlUI.findChild("pathBox");
@@ -226,9 +236,6 @@ class MintDebugger
 		if (buttonNum == _entryPath.length - 1) return;
 
 		setScope(_entryPath[buttonNum].value, _entryPath[buttonNum].name);
-
-		if (_entryPath[buttonNum-1] != null)
-			_entryPath[buttonNum].parent = _entryPath[buttonNum-1];
 
 		for (i in buttonNum+1..._pathButtons.length) {
 			var rem = _pathButtons.pop();
