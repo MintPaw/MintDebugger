@@ -29,11 +29,12 @@ class MintDebugger
 
 	private var _stage:Stage;
 	private var _topEntry:FieldEntry;
+	private var _entryPath:Array<FieldEntry>;
 
 	private var _uiRoot:Root;
 	private var _list:ListView;
 	private var _xmlUI:IDisplayObjectContainer;
-	private var _pathButtons:Array<Button> = [];
+	private var _pathButtons:Array<Button>;
 
 	private var _refreshLeft:Float = 0;
 	private var _lastTime:Float = 0;
@@ -64,16 +65,19 @@ class MintDebugger
 		_xmlUI = Toolkit.processXml(
 				Xml.parse(ResourceManager.instance.getText("assets/layout.xml")));
 
-
 		_uiRoot.style.backgroundAlpha = 0;
 		_uiRoot.addChild(_xmlUI);
 
-		_pathButtons = [];
-		_xmlUI.findChild("root", Button, true).onClick = clickedPath;
+		_pathButtons = [_xmlUI.findChild("root", Button, true)];
+		_pathButtons[0].onClick = clickedPath;
+		_pathButtons[0].userData = 0;
 
 		_list = _xmlUI.findChild("fields");
 		_list.onClick = clickedField;
 		setScope(_startPoint, "root");
+
+		_entryPath = [ _topEntry ];
+
 		toggleDebugger();
 	}
 
@@ -87,7 +91,7 @@ class MintDebugger
 		_list.dataSource.removeAll();
 		for (c in _topEntry.children) _list.dataSource.add(c.dsEntry);
 
-		trace('Found ${_topEntry.children.length}');
+		// trace('Found ${_topEntry.children.length}');
 	}
 
 	private function itFields(field:Dynamic, name:String):FieldEntry {
@@ -206,32 +210,30 @@ class MintDebugger
 		var pathBox = _xmlUI.findChild("pathBox");
 		var b:Button = new Button();
 		b.onClick = clickedPath;
-		b.userData = pathBox.numChildren;
+		b.userData = _pathButtons.length;
 		b.text = fieldName + ".";
 		b.autoSize = true;
 		_pathButtons.push(b);
 		pathBox.addChild(b);
 
 		setScope(f, fieldName, _topEntry);
+		_entryPath.push(_topEntry);
 	}
 
 	private function clickedPath(e:UIEvent):Void {
-		var b = e.component;
-		var buttonNum:Int = -1;
+		var buttonNum:Int = e.component.userData;
 
-		for (i in 0..._pathButtons.length) 
-			if (b == _pathButtons[i]) buttonNum = _pathButtons.length - i - 1;
-		if (buttonNum == -1) buttonNum = _pathButtons.length;
+		if (buttonNum == _entryPath.length - 1) return;
 
-		if (buttonNum == 0) return;
+		setScope(_entryPath[buttonNum].value, _entryPath[buttonNum].name);
 
-		var parentToGoTo = _topEntry;
-		for (i in 0...buttonNum) parentToGoTo = parentToGoTo.parent;
-		setScope(parentToGoTo.value, parentToGoTo.name);
+		if (_entryPath[buttonNum-1] != null)
+			_entryPath[buttonNum].parent = _entryPath[buttonNum-1];
 
-		for (i in 0...buttonNum) {
+		for (i in buttonNum+1..._pathButtons.length) {
 			var rem = _pathButtons.pop();
 			rem.parent.removeChild(rem);
+			_entryPath.pop();
 		}
 	}
 
