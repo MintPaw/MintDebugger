@@ -70,6 +70,7 @@ class MintDebugger
 
 		_pathButtons = [_xmlUI.findChild("root", Button, true)];
 		_pathButtons[0].onClick = clickedPath;
+		_pathButtons[0].addEventListener(MouseEvent.RIGHT_CLICK, rightClickedField);
 		_pathButtons[0].userData = 0;
 
 		_list = _xmlUI.findChild("fields");
@@ -248,6 +249,11 @@ class MintDebugger
 			rem.parent.removeChild(rem);
 			_entryPath.pop();
 		}
+	}
+
+	private function rightClickedField(e:UIEvent):Void {
+		trace(e.component.text);
+
 	}
 
 }
