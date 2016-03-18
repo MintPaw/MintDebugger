@@ -89,8 +89,10 @@ class MintDebugger
 	{
 		_topEntry = itFields(field, name);
 		_topEntry.parent = parent;
-		_list.dataSource.removeAll();
-		for (c in _topEntry.children) _list.dataSource.add(c.dsEntry);
+
+		var newDS:ArrayDataSource = new ArrayDataSource();
+		for (c in _topEntry.children) newDS.add(c.dsEntry);
+		_list.dataSource = newDS;
 	}
 
 	private function itFields(field:Dynamic, name:String):FieldEntry {
