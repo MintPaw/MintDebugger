@@ -33,8 +33,10 @@ class MintDebugger
 
 	private var _uiRoot:Root;
 	private var _list:ListView;
+	private var _consoleInput:TextInput;
 	private var _xmlUI:IDisplayObjectContainer;
 	private var _pathButtons:Array<Button>;
+	private var _objPathOver:String = "";
 
 	private var _refreshLeft:Float = 0;
 	private var _lastTime:Float = 0;
@@ -70,8 +72,10 @@ class MintDebugger
 
 		_pathButtons = [_xmlUI.findChild("root", Button, true)];
 		_pathButtons[0].onClick = clickedPath;
-		_pathButtons[0].addEventListener(MouseEvent.RIGHT_CLICK, rightClickedField);
+		_pathButtons[0].onMouseOver = overPath;
 		_pathButtons[0].userData = 0;
+
+		_consoleInput = _xmlUI.findChild("consoleInput", TextInput, true);
 
 		_list = _xmlUI.findChild("fields");
 		_list.onClick = clickedField;
@@ -169,6 +173,7 @@ class MintDebugger
 		if (visible) {
 			Mouse.show();
 			_stage.addEventListener(Event.ENTER_FRAME, update);
+			_stage.addEventListener(MouseEvent.RIGHT_CLICK, rightClicked);
 		} else {
 			_stage.removeEventListener(Event.ENTER_FRAME, update);
 		}
@@ -253,9 +258,22 @@ class MintDebugger
 		}
 	}
 
-	private function rightClickedField(e:UIEvent):Void {
+	private function overPath(e:UIEvent):Void {
 		trace(e.component.text);
+	}
 
+	private function rightClicked(e:Event):Void {
+		var itemPath:String = "";
+		for (button in _pathButtons) itemPath += button.text;
+
+		for (i in 0..._list.listSize) {
+			if (_list.getItem(i).state == "over") {
+				itemPath += _topEntry.children[i].name;
+				break;
+			}
+		}
+
+		_consoleInput.text = "!" + itemPath + " = ";
 	}
 
 }
