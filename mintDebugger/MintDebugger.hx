@@ -93,7 +93,6 @@ class MintDebugger
 		_pathButtons[0].userData = 0;
 
 		_consoleInput = _xmlUI.findChild("consoleInput", TextInput, true);
-		_consoleInput.style.color = 0xFFFFFF;
 
 		_list = _xmlUI.findChild("fields");
 		_list.onClick = clickedField;
@@ -312,12 +311,12 @@ typedef FieldEntry = {
 
 class MintInterp extends Interp {
 	override function get(o:Dynamic, f:String):Dynamic {
-		if(o == null) throw Expr.Error.EInvalidAccess(f);
+		if (o == null) throw hscript.Expr.Error.EInvalidAccess(f);
 		return Reflect.getProperty(o, f);
 	}
 
 	override function set(o:Dynamic, f:String, v:Dynamic):Dynamic {
-		if(o == null) throw Expr.Error.EInvalidAccess(f);
+		if (o == null) throw hscript.Expr.Error.EInvalidAccess(f);
 		Reflect.setProperty(o, f, v);
 		return v;
 	}
