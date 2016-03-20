@@ -1,6 +1,7 @@
 package mintDebugger;
 
 import openfl.display.*;
+import openfl.text.*;
 import openfl.events.*;
 import openfl.ui.*;
 import haxe.ui.toolkit.events.*;
@@ -11,6 +12,7 @@ import haxe.ui.toolkit.containers.*;
 import haxe.ui.toolkit.controls.*;
 import haxe.ui.toolkit.resources.*;
 import haxe.*;
+import hscript.*;
 
 class MintDebugger
 {
@@ -42,6 +44,9 @@ class MintDebugger
 	private var _lastTime:Float = 0;
 	private var _elapsed:Float = 0;
 
+	private var _parser:Parser;
+	private var _interp:MintInterp;
+
 	private var _startPoint:Dynamic;
 
 	public function new(stage:Stage, startPoint:Dynamic):Void {
@@ -49,11 +54,23 @@ class MintDebugger
 		_startPoint = startPoint;
 		stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 		trace("MintDebugger ready.");
+
 	}
 
 	private function keyUp(e:KeyboardEvent):Void {
 		if (e.keyCode == debugKey) {
 			if (!created) createDebugger() else toggleDebugger();
+		}
+
+		if (!created) return;
+
+		if (e.keyCode == Keyboard.ENTER && _consoleInput.text != "") {
+			var s:String = _consoleInput.text;
+			if (s.charAt(0) == "!") {
+				var program = _parser.parseString(s.substr(1, s.length-2));
+				_interp.execute(program);
+				_consoleInput.text = "";
+			}
 		}
 	}
 
@@ -76,10 +93,16 @@ class MintDebugger
 		_pathButtons[0].userData = 0;
 
 		_consoleInput = _xmlUI.findChild("consoleInput", TextInput, true);
+		_consoleInput.style.color = 0xFFFFFF;
 
 		_list = _xmlUI.findChild("fields");
 		_list.onClick = clickedField;
 		setScope(_startPoint, "root");
+
+		_parser = new Parser();
+		_parser.allowTypes = true;
+		_interp = new MintInterp();
+		_interp.variables.set("root", _topEntry.value);
 
 		_entryPath = [ _topEntry ];
 
@@ -273,9 +296,9 @@ class MintDebugger
 			}
 		}
 
-		_consoleInput.text = "!" + itemPath + " = ";
+		_consoleInput.text += "!" + itemPath + " = ";
+		_consoleInput.focus();
 	}
-
 }
 
 typedef FieldEntry = {
@@ -285,4 +308,18 @@ typedef FieldEntry = {
 	?parent:FieldEntry,
 	children:Array<FieldEntry>,
 	value:Dynamic
+}
+
+class MintInterp extends Interp {
+	override function get(o:Dynamic, f:String):Dynamic {
+		if(o == null) throw Expr.Error.EInvalidAccess(f);
+		return Reflect.getProperty(o, f);
+	}
+
+	override function set(o:Dynamic, f:String, v:Dynamic):Dynamic {
+		if(o == null) throw Expr.Error.EInvalidAccess(f);
+		Reflect.setProperty(o, f, v);
+		return v;
+	}
+
 }

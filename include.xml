@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<haxelib name="haxeui"/>
-	<haxedef name="no-inline" if="neko" />
+	<haxelib name="hscript"/>
 	<haxedef name="no-inline" if="neko" />
 
 	<assets path="assets" />
