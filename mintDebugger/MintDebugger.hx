@@ -1,5 +1,6 @@
 package mintDebugger;
 
+import openfl.*;
 import openfl.display.*;
 import openfl.text.*;
 import openfl.events.*;
@@ -19,6 +20,7 @@ class MintDebugger
 	public static var debugKey:Int = Keyboard.F12;
 	public static var refreshTime:Float = 1;
 	public static var priorityNames:Array<String> = [];
+	public static var settings:Settings;
 
 	private static var created:Bool = false;
 	private static var visible:Bool = false;
@@ -77,6 +79,7 @@ class MintDebugger
 	}
 
 	private function createDebugger():Void {
+		settings = Json.parse(Assets.getText("assets/default.json"));
 		created = true;
 		_refreshLeft = 0;
 		_lastTime = Timer.stamp();
@@ -146,17 +149,36 @@ class MintDebugger
 		topEntry.children.sort(function (f1, f2) { 
 			return Reflect.compare(f1.name.toLowerCase(), f2.name.toLowerCase()); });
 
-		var numMoved:Int = 0;
-		for (i in 0...priorityNames.length) {
-			var nameToFind:String = priorityNames[i];
+		{ // Apply lists
+			{ // Blacklist
+				var enteries:Array<String> = [];
 
-			for (j in 0...topEntry.children.length) {
-				if (topEntry.children[j].name == nameToFind) {
-					var tmp = topEntry.children[j];
-					topEntry.children[j] = topEntry.children[numMoved];
-					topEntry.children[numMoved] = tmp;
-					numMoved++;
-					break;
+				for (list in settings.blacklists) {
+					if (list.enabled)
+						for (e in list.enteries) enteries.push(e);
+				}
+
+				for (entry in enteries) {
+					for (c in topEntry.children) {
+						if (c.name == entry) {
+							topEntry.children.remove(c);
+						}
+					}
+				}
+			}
+
+			var numMoved:Int = 0;
+			for (i in 0...priorityNames.length) {
+				var nameToFind:String = priorityNames[i];
+
+				for (j in 0...topEntry.children.length) {
+					if (topEntry.children[j].name == nameToFind) {
+						var tmp = topEntry.children[j];
+						topEntry.children[j] = topEntry.children[numMoved];
+						topEntry.children[numMoved] = tmp;
+						numMoved++;
+						break;
+					}
 				}
 			}
 		}
@@ -314,6 +336,16 @@ typedef FieldEntry = {
 	?parent:FieldEntry,
 	children:Array<FieldEntry>,
 	value:Dynamic
+}
+
+typedef Settings = {
+	blacklists:Array<Blacklist>
+}
+
+typedef Blacklist = {
+	name:Bool,
+	enabled:Bool,
+	enteries:Array<String>
 }
 
 class MintInterp extends Interp {

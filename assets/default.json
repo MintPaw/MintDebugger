@@ -1,0 +1,30 @@
+{
+	"blacklists": [
+
+			{
+				"name": "openfl_global",
+				"enabled": true,
+				"enteries": [
+					"__filters",
+					"__graphicsCache",
+					"__handle",
+					"__id",
+					"__mouseEnabled",
+					"__scale9Grid",
+					"__scrollRect",
+					"__targetDispatcher",
+					"buttonMode",
+					"doubleClickEnabled",
+					"graphics",
+					"loaderInfo",
+					"mask",
+					"mouseX",
+					"mouseY",
+					"root",
+					"useHandCursor"
+				]
+			}
+
+		]
+
+}
