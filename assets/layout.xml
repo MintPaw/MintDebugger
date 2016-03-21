@@ -12,8 +12,8 @@
 
 	<listview id="fields" width="50%" height="100%" />
 
-	<vbox id="consoleBox" style="color:0xFFFFFF" width="50%" height="100%">
-		<text id="consoleOutput" text="" height="100%" width="100%" />
+	<vbox id="consoleBox" width="50%" height="100%">
+		<text style="backgroundColor:0x333333" id="consoleOutput" text="" height="100%" width="100%" />
 		<textinput id="consoleInput" width="100%"/>
 	</vbox>
 
