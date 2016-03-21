@@ -126,7 +126,7 @@ class MintDebugger
 
 		if (Std.is(field, Array)) {
 			for (i in 0...field.length)
-				topEntry.children.push(toFieldEntry(cast i, field[i], topEntry));
+				topEntry.children.push(toFieldEntry('[$i]', field[i], topEntry));
 
 			return topEntry;
 		}
@@ -218,7 +218,8 @@ class MintDebugger
 		ent.value = null;
 
 		if (ent.parent.className == "Array") {
-			ent.value = ent.parent.value[Std.parseInt(ent.name)];
+			var index:Int = Std.parseInt(ent.name.substr(1, ent.name.length-2));
+			ent.value = ent.parent.value[index];
 		} else {
 			ent.value = Reflect.field(ent.parent.value, ent.name);
 		}
@@ -244,7 +245,8 @@ class MintDebugger
 		var f:Dynamic = null;
 
 		if (_topEntry.className == "Array") {
-			f = _topEntry.value[Std.parseInt(fieldName)];
+			var index:Int = Std.parseInt(fieldName.substr(1, fieldName.length-2));
+			f = _topEntry.value[index];
 		} else {
 			f = Reflect.field(_topEntry.value, fieldName);
 		}
@@ -257,12 +259,14 @@ class MintDebugger
 		var b:Button = new Button();
 		b.onClick = clickedPath;
 		b.userData = _pathButtons.length;
-		b.text = fieldName + ".";
+		b.text = fieldName;
 		b.autoSize = true;
 		_pathButtons.push(b);
 		pathBox.addChild(b);
 
 		setScope(f, fieldName, _topEntry);
+		if (_topEntry.className != "Array") b.text += ".";
+
 		_entryPath.push(_topEntry);
 	}
 
