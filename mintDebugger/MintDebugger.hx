@@ -34,9 +34,10 @@ class MintDebugger
 	private var _entryPath:Array<FieldEntry>;
 
 	private var _uiRoot:Root;
+	private var _xmlUI:IDisplayObjectContainer;
 	private var _list:ListView;
 	private var _consoleInput:TextInput;
-	private var _xmlUI:IDisplayObjectContainer;
+	private var _consoleOutput:TextInput;
 	private var _pathButtons:Array<Button>;
 	private var _objPathOver:String = "";
 
@@ -69,6 +70,7 @@ class MintDebugger
 			if (s.charAt(0) == "!") {
 				var program = _parser.parseString(s.substr(1, s.length-2));
 				_interp.execute(program);
+				_consoleOutput.text += "> " + _consoleInput.text + "\n";
 				_consoleInput.text = "";
 			}
 		}
@@ -93,6 +95,7 @@ class MintDebugger
 		_pathButtons[0].userData = 0;
 
 		_consoleInput = _xmlUI.findChild("consoleInput", TextInput, true);
+		_consoleOutput = _xmlUI.findChild("consoleOutput", TextInput, true);
 
 		_list = _xmlUI.findChild("fields");
 		_list.onClick = clickedField;
