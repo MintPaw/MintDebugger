@@ -8,6 +8,6 @@
   "releasenote": "unknown",
   "contributors": ["unkown","unkown","unkown"],
   "dependencies": {
-    "openfl": "3.6.0"
+    "openfl": "3.6.1"
   }
 }
