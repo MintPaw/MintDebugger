@@ -7,7 +7,7 @@
 	</hbox>
 
 	<hbox id="optionsBox" width="50%" autoSize="false" >
-		<!-- TODO: Align this right-to-left -->
+		<button id="preferences" text="Preferences" />
 	</hbox>
 
 	<listview id="fields" width="50%" height="100%" />

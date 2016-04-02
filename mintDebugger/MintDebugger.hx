@@ -37,11 +37,13 @@ class MintDebugger
 
 	private var _uiRoot:Root;
 	private var _xmlUI:IDisplayObjectContainer;
-	private var _list:ListView;
+	private var _objPathOver:String = "";
+
 	private var _consoleInput:TextInput;
 	private var _consoleOutput:TextInput;
 	private var _pathButtons:Array<Button>;
-	private var _objPathOver:String = "";
+	private var _list:ListView;
+	private var _prefButton:Button;
 
 	private var _refreshLeft:Float = 0;
 	private var _lastTime:Float = 0;
@@ -57,7 +59,6 @@ class MintDebugger
 		_startPoint = startPoint;
 		stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 		trace("MintDebugger ready.");
-
 	}
 
 	private function keyUp(e:KeyboardEvent):Void {
@@ -99,6 +100,7 @@ class MintDebugger
 
 		_consoleInput = _xmlUI.findChild("consoleInput", TextInput, true);
 		_consoleOutput = _xmlUI.findChild("consoleOutput", TextInput, true);
+		_xmlUI.findChild("preferences", Button, true).onClick = showPref;
 
 		_list = _xmlUI.findChild("fields");
 		_list.onClick = clickedField;
@@ -324,8 +326,12 @@ class MintDebugger
 			}
 		}
 
-		_consoleInput.text += "!" + itemPath + " = ";
+		_consoleInput.text = "!" + itemPath + " = ";
 		_consoleInput.focus();
+	}
+
+	function showPref(e:UIEvent):Void {
+		trace("test");
 	}
 }
 
